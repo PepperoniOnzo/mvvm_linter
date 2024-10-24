@@ -6,4 +6,4 @@ analyzer:
 custom_lint:
   debug: true
   rules:
-    - lint_order
+    - mvvm_linter
