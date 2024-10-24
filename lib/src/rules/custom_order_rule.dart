@@ -1,4 +1,4 @@
-import 'dart:developer' as d;
+// import 'dart:developer' as d;
 
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
@@ -7,11 +7,24 @@ import 'package:mvvm_linter/src/utils/classifier.dart';
 
 class ClassOrderRule extends DartLintRule {
   ClassOrderRule(
-      {List<ElementType> lintOrder = const [
+      {
+      /// Structure of viewModel should be:
+      ///
+      /// - constructor -- ConstructorDeclarationImpl
+      /// - completions -- CallBacks FieldDeclarationImpl
+      /// - repositories -- FieldDeclarationImpl
+      /// - final properties public/private -- FieldDeclarationImpl
+      /// - late properties public/private -- FieldDeclarationImpl
+      /// - get/set properties public/private -- MethodDeclarationImpl
+      /// - methods public/private -- MethodDeclarationImpl
+      ///
+      List<ElementType> lintOrder = const [
         ElementType.constructor,
+        ElementType.completion,
         ElementType.classObject,
-        ElementType.finalProperty,
+        ElementType.nonChangeableProperty,
         ElementType.lateProperty,
+        ElementType.otherProperty,
         ElementType.getterSetter,
         ElementType.method,
       ]})
@@ -35,12 +48,12 @@ class ClassOrderRule extends DartLintRule {
   ) {
     context.registry.addClassDeclaration(
       (node) {
-        d.log('------------------------------------');
-        d.log('CLASS MEMBER: ${node.declaredElement?.name}');
+        // d.log('------------------------------------');
+        // d.log('CLASS MEMBER: ${node.declaredElement?.name}');
 
         final bool isNotStatefulOrStateless =
             Classifier.isNotStatefulOrStateless(node);
-        d.log('CLASS isNotStatefulOrStateless: $isNotStatefulOrStateless');
+        // d.log('CLASS isNotStatefulOrStateless: $isNotStatefulOrStateless');
 
         if (!isNotStatefulOrStateless) return;
 
@@ -48,7 +61,7 @@ class ClassOrderRule extends DartLintRule {
 
         for (var member in node.members) {
           final ElementType? elementType = Classifier.getElementType(member);
-          d.log('CLASS m.type: $elementType');
+          // d.log('CLASS m.type: $elementType');
 
           if (elementType == null) continue;
 
@@ -57,8 +70,8 @@ class ClassOrderRule extends DartLintRule {
             continue;
           }
 
-          d.log(
-              'CLASS index: ${_lintOrder.indexOf(_currentClassElementsOrder.last)} : ${_lintOrder.indexOf(elementType)}');
+          // d.log(
+          //     'CLASS index: ${_lintOrder.indexOf(_currentClassElementsOrder.last)} : ${_lintOrder.indexOf(elementType)}');
           if (_lintOrder.indexOf(_currentClassElementsOrder.last) >
               _lintOrder.indexOf(elementType)) {
             reporter.atEntity(

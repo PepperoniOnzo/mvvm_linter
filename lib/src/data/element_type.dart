@@ -1,26 +1,21 @@
 enum ElementType {
   constructor,
+  completion,
   classObject,
-  finalProperty,
+  nonChangeableProperty,
   lateProperty,
+  otherProperty,
   getterSetter,
   method;
 
   String getDisplayName() => switch (this) {
         constructor => 'Constructors',
+        completion => 'Completions',
         classObject => 'Class Objects',
-        finalProperty => 'Final Properties',
+        nonChangeableProperty => 'Final/Const/Static Properties',
         lateProperty => 'Late Properties',
+        otherProperty => 'Non Final/Const/Static/Late Properties',
         getterSetter => 'Getters or Setters',
         method => 'Methods',
       };
 }
-
-// structure of viewModel should be:
-// - constructor -- ConstructorDeclarationImpl
-// - completions ???
-// - repositories -- FieldDeclarationImpl
-// - final properties public/private -- FieldDeclarationImpl
-// - late properties public/private -- FieldDeclarationImpl
-// - get/set properties public/private -- MethodDeclarationImpl
-// - methods public/private -- MethodDeclarationImpl
